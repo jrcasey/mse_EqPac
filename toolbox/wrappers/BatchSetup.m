@@ -25,7 +25,7 @@ close all
 
 %% Change directory
 % change this path to where you have MSE installed
-rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/MSE_Standalone';
+rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/MSE_EqPac';
 cd(rootPath)
 % make sure the toolbox is in Matlab's path
 addpath(genpath(rootPath));
@@ -48,7 +48,7 @@ FileNames.strainList_Path = 'data/db/strainList.mat';
 % Current OGTDat
 FileNames.OGTDat_Path = 'data/db/OGTDat.csv';
 % Cruise data
-FileNames.CruiseDB_filename = 'data/envData/AMT13_Gridded2.csv';
+FileNames.CruiseDB_filename = 'data/envData/EqPac_tt011_Gridded.csv';
 % HyperPro profiles
 FileNames.IrrDat_fileName = 'data/envData/IrrDat.mat';
 % TpDat path
