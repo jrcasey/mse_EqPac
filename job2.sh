@@ -4,7 +4,7 @@
 #SBATCH -o jrcaseyjarray_%A_%a.out # Standard output
 #SBATCH -e jrcaseyjarray_%A_%a.err # Standard error
 
-cd /home/jrcasey/mse/
+cd /home/jrcasey/mse_EqPac/
 
 echo ${SLURM_ARRAY_TASK_ID}
 export SLURM_ARRAY_TASK_ID
