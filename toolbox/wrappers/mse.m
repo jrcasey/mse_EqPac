@@ -11,16 +11,14 @@ close all
 
 %% Change directory
 %%%%%% LOCAL %%%%%%
-% change this path to where you have MSE installed
-rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/mse_EqPac';
-cd(rootPath)
-% make sure the toolbox is in Matlab's path
-addpath(genpath(rootPath));
+% rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/mse_EqPac';
+% cd(rootPath)
+% addpath(genpath(rootPath));
 
 %%%%%% REMOTE %%%%%%
-% addpath(genpath('~/mse_EqPac/'));
-% addpath(genpath('~/mosek/'));
-% cd ~/mse_EqPac/	
+addpath(genpath('~/mse_EqPac/'));
+addpath(genpath('~/mosek/'));
+cd ~/mse_EqPac/
 
 %% Load data
 % These files are generated in BatchSetup.m
