@@ -1,55 +1,74 @@
 function CruiseDat = getCruiseData(CruiseDB, depthVec)
-%% Standardize AMT Data
+%% Standardize EqPac Data
 
-Data = CruiseDB;
-
-varNames = Data.Properties.VariableNames(6:end); % just the nutrients for now
+varNames = CruiseDB.Properties.VariableNames(6:end); % just the nutrients for now
 % Find and index stations
-uStations = unique(Data.Station);
+uStations = unique(CruiseDB.Station);
 nStations = numel(uStations);
-for i = 1:nStations
-    station_ind{i} = find(strcmp(uStations{i},Data.Station));
+% indices for each station
+for a = 1:nStations
+    station_ind{a} = find(CruiseDB.Station == uStations(a));
+end
+% indices for each depth
+for a = 1:numel(depthVec)
+   depth_ind{a} = find(CruiseDB.Depth == depthVec(a));
 end
 
-% Interpolate (linear)
+% Interpolate (depth)
 CruiseDat = struct;
 CruiseDat.Stations = uStations;
 CruiseDat.Depth = depthVec;
-for i = 1:nStations
-    for j = 1:numel(varNames) 
+for a = 1:nStations
+    for b = 1:numel(varNames) 
         clear x v vq
-        x = Data.Depth(station_ind{i});
-        v = Data.(varNames{j})(station_ind{i});
+        x = CruiseDB.Depth(station_ind{a});
+        v = CruiseDB.(varNames{b})(station_ind{a});
         % deal with the nans
         nanInd = find(isnan(v));
         x(nanInd) = [];
         v(nanInd) = [];
         if numel(find(~isnan(v)))<3
-            CruiseDat.(varNames{j})(i,:) = zeros(numel(depthVec),1);
+            CruiseDat.(varNames{b})(a,:) = zeros(numel(depthVec),1);
         else
         vq = interp1(x,v,depthVec,'linear');
-        CruiseDat.(varNames{j})(i,:) = vq;
+        CruiseDat.(varNames{b})(a,:) = vq;
         end
     end
-    CruiseDat.Lat(i) = Data.Lat(station_ind{i}(1));
-    CruiseDat.Lon(i) = Data.Lon(station_ind{i}(1));
-    CruiseDat.Date(i) = Data.Date(station_ind{i}(1));
+    CruiseDat.Lat(a) = CruiseDB.Lat(station_ind{a}(1));
+    CruiseDat.Lon(a) = CruiseDB.Lon(station_ind{a}(1));
+    CruiseDat.Date(a) = CruiseDB.Date(station_ind{a}(1));
 end
 
+% interpolate (latitude)
+depthIdx_vec = 1:numel(depthVec);
+for a = 1:numel(depthVec)
+    for b = 1:numel(varNames) 
+        clear x v vq
+        x = CruiseDB.Lat(depth_ind{a});
+        v = CruiseDB.(varNames{b})(depth_ind{a});
+        % deal with the nans
+        nanInd = find(isnan(v));
+        x(nanInd) = [];
+        v(nanInd) = [];
+        if numel(find(~isnan(v)))<5
+            CruiseDat.(varNames{b})(:,a) = zeros(nStations,1);
+        else
+        vq = interp1(x,v,CruiseDat.Lat,'linear');
+        CruiseDat.(varNames{b})(:,a) = vq;
+        end
+    end
+end
+
+
 % Change some units to nM
-CruiseDat.NitratePlusNitrite = CruiseDat.NitratePlusNitrite .* 1000;
-CruiseDat.Nitrite = CruiseDat.Nitrite .* 1000;
-CruiseDat.Orthophosphate = CruiseDat.Orthophosphate .* 1000;
-CruiseDat.Ammonium = 7 + (CruiseDat.Ammonium .* 1000);
-CruiseDat.Silicate = CruiseDat.Silicate .* 1000;
-% Compute nitrate
-CruiseDat.Nitrate = CruiseDat.NitratePlusNitrite - CruiseDat.Nitrite;
-CruiseDat.Nitrate(find(CruiseDat.Nitrate <0)) = 0;
+CruiseDat.Nitrate = CruiseDat.NO3 .* 1000;
+CruiseDat.Nitrite = CruiseDat.NO2 .* 1000;
+CruiseDat.Orthophosphate = CruiseDat.PO4 .* 1000;
+CruiseDat.Ammonia = nanmean(cat(3,CruiseDat.NH4,CruiseDat.LL_nh4),3) .* 1000; % shit correlation between the two methods, so taking the average for lack of a better idea
 
 % Some name changes too
-CruiseDat.T = CruiseDat.Temp;
-CruiseDat.Ammonia = CruiseDat.Ammonium;
-rmfield(CruiseDat,{'Temp','Ammonium'});
+CruiseDat.T = CruiseDat.temp;
+CruiseDat = rmfield(CruiseDat,{'Temp_1000','urea','LL_nh4','NH4','NO3','NO2','PO4'});
 
 
 

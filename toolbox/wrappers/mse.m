@@ -10,19 +10,25 @@ close all
 % 20210221
 
 %% Change directory
+%%%%%% LOCAL %%%%%%
 % change this path to where you have MSE installed
-rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/MSE_Standalone';
+rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/mse_EqPac';
 cd(rootPath)
 % make sure the toolbox is in Matlab's path
 addpath(genpath(rootPath));
 
+%%%%%% REMOTE %%%%%%
+% addpath(genpath('~/mse_EqPac/'));
+% addpath(genpath('~/mosek/'));
+% cd ~/mse_EqPac/	
+
 %% Load data
 % These files are generated in BatchSetup.m
 
-load FileNames
-load Gridding
-load Options
-load CruiseData
+load('data/output/FileNames.mat')
+load('data/output/Gridding.mat')
+load('data/output/Options.mat')
+load('data/output/CruiseData.mat')
 
 %% Get SLURM index
 

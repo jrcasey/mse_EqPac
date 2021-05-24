@@ -3,9 +3,9 @@
 
 %% set root dir (for server only)
 
-addpath(genpath('~/mse_AMT/'));
+addpath(genpath('~/mse_EqPac/'));
 addpath(genpath('~/mosek/'));
-cd ~/mse_AMT/	
+cd ~/mse_EqPac/	
 
 %% Version
 version = strcat({'_v'},datestr(date,'yyyymmdd'))

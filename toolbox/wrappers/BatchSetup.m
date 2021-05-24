@@ -80,14 +80,8 @@ Options.fmax = 0.085; % maximum coverage of cell surface area by transporters (p
 
 Gridding = struct;
 % Stations to include in batch run
-Gridding.stationsVec =[{'A13_03'},{'A13_06'},{'A13_08'},{'A13_11'}, ...
-    {'A13_13'},{'A13_15'},{'A13_16'},{'A13_19'},{'A13_22'},{'A13_25'}, ...
-    {'A13_28'},{'A13_31'},{'A13_32'},{'A13_35'},{'A13_38'},{'A13_41'}, ...
-    {'A13_42'},{'A13_45'},{'A13_48'},{'A13_51'},{'A13_54'},{'A13_57'}, ...
-    {'A13_60'},{'A13_63'},{'A13_66'},{'A13_68'},{'A13_69'},{'A13_72'}, ...
-    {'A13_75'},{'A13_76'},{'A13_77'},{'A13_78'}]; % station names
-Gridding.stationsVec2 = [2 4 5 7 8 9 10 12 15 17 19 21 22 24 26 ...
-    28 29 31 33 35 37 39 41 43 45 46 47 49 51 52 53 54]; % corresponding station indices (in CruiseData)
+Gridding.stationsVec =[1:15]; % station names
+Gridding.stationsVec2 = [1:15]; % corresponding station indices (in CruiseData)
 Gridding.nStations = numel(Gridding.stationsVec);
 % Depth (m)
 Gridding.minZ = 10; % minimum depth
@@ -126,7 +120,8 @@ load(FileNames.IrrDat_fileName);
 [IrrDat2] = standardizeIrr(IrrDat,Gridding.lambdaVec,Gridding.depthVec); %mmoles photons m-2 h-1 bandwidth*nm-1
 IrrDat3 = reshape([IrrDat2{:}],numel(Gridding.depthVec),numel(Gridding.lambdaVec),numel(IrrDat2));
 CruiseData.IrrDat = IrrDat3;
-CruiseData.PAR = squeeze(nansum(IrrDat3,2))';
+CruiseData.PAR = squeeze(nansum(IrrDat3,2))'; % mmol photons m-2 h-1
+CruiseData.PAR2 = IrrDat.PAR(Gridding.depthVec,Gridding.stationsVec); % mumol 
 
 %% Parse strain models and save to data/GEM/StrMod/ folder
 
@@ -144,4 +139,6 @@ save('data/output/Gridding.mat','Gridding');
 save('data/output/FileNames.mat','FileNames');
 save('data/output/Options.mat','Options');
 save('data/output/CruiseData.mat','CruiseData');
+
+
 
