@@ -2,7 +2,7 @@
 START=1
 END=20700
 STEP=300
-SLEEP=600 # 10 minutes
+SLEEP=1000 # 10 minutes
 
 
 for i in $(seq $START $STEP $END) ; do	
