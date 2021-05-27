@@ -1,4 +1,4 @@
-function [FullSolution] = get_AMT_Results_server(ResultsDirectory,PanGEM,FileNames,Gridding,CruiseData)
+function [FullSolution] = get_EqPac_Results_server(ResultsDirectory,PanGEM,FileNames,Gridding,CruiseData)
 % Retrieves all individual solutions from the server and concatenates them
 % into a single structure. Also saves Gridding and CruiseData into the same
 % structure for analysis. 
@@ -48,7 +48,7 @@ missingFileNo = setdiff(expectedFiles,fileNo2);
 
 
 %% Preallocate matrices to structure (need to load a template solution to do this)
-load Solution_1 % This is a template solution, stored in mse_AMT/data/output/ after running AMT_Wrapper on a single query index
+load Solution_1 % This is a template solution, stored in EqPac_AMT/data/output/ after running mse.m on a random query index
 for a = 1:Gridding.nStr
     FullSolution.(Gridding.strNameVec{a}).Growth = zeros(Gridding.nZ,Gridding.nStations);
     nFluxes = numel(Solution.Fluxes);
@@ -77,7 +77,7 @@ end
 %% Loop through each file
 % Store solution data in FullSolution structure
 %for a = 1:nFiles
-for a = 22316:nFiles
+for a = 1:nFiles
     % Load a solution
     load(strcat(ResultsDirectory,files(a).name)); % Will be called Solution, so it'll write over the template solution loaded above
     if isfield(Solution,'Fluxes')
@@ -104,7 +104,12 @@ for a = 22316:nFiles
     FullSolution.(Solution.strName).S_star(j,i,:) = Solution.S_star;
     FullSolution.(Solution.strName).StrMod1_growth(j,i) = Solution.StrMod1_growth;
     FullSolution.(Solution.strName).StrMod2_growth(j,i) = Solution.StrMod2_growth;
-    FullSolution.(Solution.strName).StrMod3_growth(j,i) = Solution.StrMod3_growth;
+    % in case StrMod3 solution was infeasible, assign a nan
+    if isempty(Solution.StrMod4_growth)
+        FullSolution.(Solution.strName).StrMod3_growth(j,i) = NaN;
+    else
+        FullSolution.(Solution.strName).StrMod3_growth(j,i) = Solution.StrMod3_growth;
+    end
     % in case StrMod4 solution was infeasible, assign a nan
     if isempty(Solution.StrMod4_growth)
         FullSolution.(Solution.strName).StrMod4_growth(j,i) = NaN;
